@@ -54,7 +54,28 @@ def createView1(sdate,edate,item):
             print("error")    
          
         return an1 
-
+##################################
+def report(sdate,edate):
+        try:
+        ##creating view
+            db_cursor.execute("CREATE VIEW dated_view  AS SELECT * FROM EXPENSE where DATE >= "+sdate+" AND DATE <= "+edate)
+            #generating the report in these dates 
+            #fn call
+            reportView(sdate,edate)
+            
+            db_cursor.execute("DROP VIEW dated_view")
+        except IOError:
+            #handle
+            print("error")  
+                
+        #return an
+ 
+def reportView(sdate,edate):
+            val=db_cursor.execute("SELECT  * FROM dated_view where DATE >= "+sdate+" AND DATE <= "+edate).fetchall()
+            print(val)
+                    
+report("'2018-08-01'","'2018-08-05'")
+###########################
 
 def check(amount,date):
           sumItem=0

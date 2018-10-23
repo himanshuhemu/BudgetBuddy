@@ -4,8 +4,9 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter.ttk import *
 from datetime import date
-import fk as f
+import BackEnd as f
 import tkinter as tk
+from tkinter import Menu
 import datetime
 import string
 #var declaration
@@ -20,6 +21,16 @@ window = Tk()
 window.title("ExpMan")
 window.geometry('400x400')   
 
+menu = Menu(window)
+ 
+new_item = Menu(menu,tearoff=0)
+    
+new_item.add_command(label='Exit',command=window.destroy)
+ 
+menu.add_cascade(label='File', menu=new_item)
+
+window.config(menu=menu)
+
 
 v = tk.StringVar()
 tab_control = ttk.Notebook(window)
@@ -28,11 +39,19 @@ tab1 = ttk.Frame(tab_control)
 tab2 = ttk.Frame(tab_control)
 tab3 = ttk.Frame(tab_control)
 tab4= ttk.Frame(tab_control)
+tab5= ttk.Frame(tab_control)
+
 tab_control.add(tab1, text='Entry')
 tab_control.add(tab2, text='Check')
 tab_control.add(tab3, text='Search with date')
 tab_control.add(tab4 , text='Search with Name ')
+tab_control.add(tab5 , text='Generate Report')
+
 #tab1 stuff 
+
+#tab1nav bar 
+
+
 lbl = Label(tab1, text="Entry", font=("Arial Bold", 20))
 lbl.grid(column=0, row=0)
 
@@ -146,7 +165,7 @@ spi1 = Spinbox(tab3, from_=1, to=12, width=5)
 spi1.grid(column=1,row=3)
 
 spi2 = Spinbox(tab3, from_=2000, to=2019, width=5)
-spi2.grid(column=2,row=3)
+spi2.grid(column=2,row=3)   
 
 l_bl3=Label(tab3, text="")
 l_bl3.grid(column=1, row=5) 
@@ -216,7 +235,7 @@ tbl2=Label(tab4, text="Name of Expense or Income")
 tbl2.grid(column=0, row=0)
 tbt = Entry(tab4,width=20)
 tbt.grid(column=1, row=0)
-tbl3=Lable(tab4,text="")
+tbl3=Label(tab4,text="")
 tbl3.grid(column=1,row=4)                                                                                                                                                                                                                                               
 v = IntVar()
 v.set(1)
@@ -240,6 +259,76 @@ def clkd():
         
 fbtn2 = Button(tab4, text="Click Me", command=clkd) 
 fbtn2.grid(column=1, row=5)
+
+#tab5 
+
+l2=Label(tab5, text="Start",font=("Arial Bold", 10))
+l2.grid(column=0, row=0)
+
+spin_1 = Spinbox(tab5, from_=1, to=31, width=5)
+spin_1.grid(column=0,row=1)
+
+spin_2 = Spinbox(tab5, from_=1, to=12, width=5)
+spin_2.grid(column=1,row=1)
+
+spin_3 = Spinbox(tab5, from_=2000, to=2019, width=5)
+spin_3.grid(column=2,row=1)
+
+#end date
+
+
+l3=Label(tab5, text="End",font=("Arial Bold", 10))
+l3.grid(column=0, row=2)
+
+spi_1 = Spinbox(tab5, from_=1, to=31, width=5)
+spi_1.grid(column=0,row=3)
+    
+spi0 = Spinbox(tab5, from_=1, to=12, width=5)
+spi0.grid(column=1,row=3)
+
+spi9 = Spinbox(tab5, from_=2000, to=2019, width=5)
+spi9.grid(column=2,row=3)   
+
+l3=Label(tab5, text="")
+l3.grid(column=1, row=5) 
+        
+
+def click3():
+    sd1=spin_1.get()
+    sd2=spin_2.get()
+    sd3=spin_3.get()
+    if int(sd2)<10:
+        sd2='0'+sd2
+    if int(sd1)<10:
+        sd1='0'+sd1
+    
+    ed1=spi_1.get()
+    ed2=spi0.get()
+    ed3=spi9.get()
+    
+    if int(ed2)<10:
+        ed2='0'+ed2
+    
+    if int(ed1)<10:
+        ed1='0'+ed1
+        
+    #merging of dates
+    startDate= "'"+sd3+"-"+sd2+"-"+sd1+"'"
+    endDate = "'"+ed3+"-"+ed2+"-"+ed1+"'"
+    #total expenses in these dates
+    #dis=f.createView(startDate,endDate)
+    #l_bl3.configure(text=dis)
+    #newform()
+    return startDate,endDate
+
+def clkd_new():
+    startDate,endDate=click3() 
+    f.report(startDate,endDate)
+
+fbn2 = Button(tab5, text="Click Me", command=clkd_new) 
+fbn2.grid(column=1, row=5)
+
+
 
 
 tab_control.grid() 
