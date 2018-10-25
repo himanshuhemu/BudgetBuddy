@@ -1,7 +1,6 @@
 
 from tkinter import *
 from tkinter import ttk
-from tkinter import messagebox
 from tkinter.ttk import *
 from datetime import date
 import BackEnd as f
@@ -9,6 +8,7 @@ import tkinter as tk
 from tkinter import Menu
 import datetime
 import string
+from tkinter import messagebox
 #var declaration
 
 now= datetime.datetime.now()
@@ -113,7 +113,6 @@ l_lbl2.grid(column=0,row=2)
 
 l_lbl3=Label(tab2 , text = "Remaining")
 l_lbl3.grid(column=0,row=3)
-
 l_txt = Entry(tab2,width=20)
 l_txt.grid(column=1, row=1)
 
@@ -126,7 +125,8 @@ d_lbl2.grid(column=1, row=3)
 
 def clicked2():
         inf=l_txt.get()
-        state,ans=f.check(int(inf),tdate)
+        state,ans,msg1=f.check(inf,tdate)
+        messagebox.showinfo('Message', msg1)
         if state:
             d_lbl.configure(text="yes")
         else:
@@ -293,6 +293,11 @@ l3=Label(tab5, text="")
 l3.grid(column=1, row=5) 
         
 
+#displaying data
+
+
+
+
 def click3():
     sd1=spin_1.get()
     sd2=spin_2.get()
@@ -323,8 +328,10 @@ def click3():
 
 def clkd_new():
     startDate,endDate=click3() 
-    f.report(startDate,endDate)
-
+    efile,msg=f.report(startDate,endDate)
+    messagebox.showinfo('Message', msg)
+    bol=f.func(efile)
+    
 fbn2 = Button(tab5, text="Click Me", command=clkd_new) 
 fbn2.grid(column=1, row=5)
 

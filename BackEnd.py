@@ -61,24 +61,27 @@ def report(sdate,edate):
             db_cursor.execute("CREATE VIEW dated_view  AS SELECT * FROM EXPENSE where DATE >= "+sdate+" AND DATE <= "+edate)
             #generating the report in these dates 
             #fn call
-            reportView(sdate,edate)
-            
+            nval=db_cursor.execute("SELECT  * FROM dated_view where DATE >= "+sdate+" AND DATE <= "+edate).fetchall()
+            msg="Success"
             db_cursor.execute("DROP VIEW dated_view")
         except IOError:
             #handle
-            print("error")  
+            msg="Error"        
                 
-        #return an
+        return nval, msg
  
 def reportView(sdate,edate):
             val=db_cursor.execute("SELECT  * FROM dated_view where DATE >= "+sdate+" AND DATE <= "+edate).fetchall()
-            print(val)
+            return val
                     
-report("'2018-08-01'","'2018-08-05'")
+#report("'2018-08-01'","'2018-08-05'")
 ###########################
 
 def check(amount,date):
+        try:
           sumItem=0
+          ndiff=0
+          amount=int(amount)  
           ndt=date.split('-')
           mdate=ndt[1]
           ydate=ndt[0]
@@ -95,12 +98,55 @@ def check(amount,date):
           for item1 in val_1:
               sumItem1 +=item1
           #print(sumItem1)
+          msg="Success"
           diff=sumItem-sumItem1
           ndiff=diff-amount
           if ndiff>0:
-              return True,ndiff
+              return True,ndiff,msg
           else:
-              return False,ndiff
+              return False,ndiff,msg
+        except ValueError:
+           msg="Error"
+           return False,ndiff,msg
+          
+            
+import xlsxwriter
+
+# Create a workbook and add a worksheet.
+def func(expenses):
+    workbook = xlsxwriter.Workbook('Report.xlsx')
+    worksheet = workbook.add_worksheet()
+    worksheet.set_column('A:D', 12)
+    # Write the caption.
+    
+    # Add a table to the worksheet.
+    worksheet.add_table('A1:D10', {'data': expenses,
+                                   'columns': [{'header': 'Name'},
+                                               {'header': 'Amount'},
+                                               {'header': 'Date'},
+                                               ]})
+    
+    # Some data we want to write to the worksheet.
+    
+    # Start from the first cell. Rows and columns are zero indexed.
+    row = 1
+    col = 0
+    add=0
+    # Iterate over the data and write it out row by row.
+    for item, cost , date in (expenses):
+        worksheet.write(row, col,     item)
+        worksheet.write(row, col + 1, cost)
+        worksheet.write(row, col + 2, date)
+        add+=cost
+        row += 1
+
+    # Write a total using a formula.
+    worksheet.write(row, 0, 'Total')
+    worksheet.write(row, 1 , add)
+    workbook.close()
+
+    
+          
 
 db_con.commit()
 '''
